@@ -4,8 +4,8 @@ var queryString = window.location.search;
 var urlParams = new URLSearchParams(queryString);
 var redirectUrlEncode = urlParams.get('redirect');
 
-if(redirectUrlEncode === undefined || redirectUrlEncode === '' || redirectUrlEncode === null){
-  window.location.href = 'https://piandhust.github.io/purl/convert.html';
+if (redirectUrlEncode === undefined || redirectUrlEncode === '' || redirectUrlEncode === null) {
+  window.location.href = 'https://nqdev-storage.github.io/purl/convert.html';
 }
 
 var redirectUrl = atob(redirectUrlEncode);
