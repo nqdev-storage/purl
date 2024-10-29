@@ -1,11 +1,11 @@
-import { TIME_OUT, DELAY_TIME, TIME_OUT_SKIP } from './constants.js';
+// import { TIME_OUT, DELAY_TIME, TIME_OUT_SKIP, BASE_URL } from './constants.js';
 
 var queryString = window.location.search;
 var urlParams = new URLSearchParams(queryString);
 var redirectUrlEncode = urlParams.get('redirect');
 
 if (redirectUrlEncode === undefined || redirectUrlEncode === '' || redirectUrlEncode === null) {
-  window.location.href = 'https://nqdev-storage.github.io/purl/convert.html';
+  window.location.href = BASE_URL + '/convert.html';
 }
 
 var redirectUrl = atob(redirectUrlEncode);
