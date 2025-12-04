@@ -78,6 +78,12 @@ function renderHistoryTable(records) {
   records.forEach((record, index) => {
     const row = document.createElement('tr');
 
+    const keyIdCell = document.createElement('td');
+    keyIdCell.className = 'text-truncate';
+    keyIdCell.style.maxWidth = '90px';
+    keyIdCell.title = record.id;
+    keyIdCell.textContent = record.id;
+    
     const originalUrlCell = document.createElement('td');
     originalUrlCell.className = 'text-truncate';
     originalUrlCell.style.maxWidth = '200px';
@@ -107,6 +113,7 @@ function renderHistoryTable(records) {
     deleteBtn.onclick = () => deleteHistoryItem(record.id);
     actionCell.appendChild(deleteBtn);
 
+    row.appendChild(keyIdCell);
     row.appendChild(originalUrlCell);
     row.appendChild(shortUrlCell);
     row.appendChild(timestampCell);
@@ -323,3 +330,4 @@ window.onload = (event) => {
   // Load history on page load
   loadHistory();
 }
+
