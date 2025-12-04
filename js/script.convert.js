@@ -168,6 +168,11 @@ async function deleteHistoryItem(id) {
           showConfirmButton: false
         });
       };
+
+      transaction.onerror = () => {
+        db.close();
+        console.log("🚀 QuyNH: deleteHistoryItem -> transaction error", transaction.error);
+      };
     }
   } catch (error) {
     console.log("🚀 QuyNH: deleteHistoryItem -> error", error);
@@ -203,6 +208,11 @@ async function clearAllHistory() {
           timer: 1500,
           showConfirmButton: false
         });
+      };
+
+      transaction.onerror = () => {
+        db.close();
+        console.log("🚀 QuyNH: clearAllHistory -> transaction error", transaction.error);
       };
     }
   } catch (error) {
