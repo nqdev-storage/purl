@@ -8,7 +8,26 @@ if (redirectUrlEncode === undefined || redirectUrlEncode === '' || redirectUrlEn
   window.location.href = BASE_URL + '/convert.html';
 }
 
-var redirectUrl = atob(redirectUrlEncode);
+function isSafeRedirect(url) {
+  try {
+    // Only allow same-origin relative URLs (no protocol, no slashes at start)
+    // Prevent dangerous schemes such as "javascript:", "data:", etc.
+    // See: https://developer.mozilla.org/en-US/docs/Web/API/URL
+    const parsed = new URL(url, window.location.origin);
+    // Only allow redirects within the same origin
+    if (parsed.origin !== window.location.origin) return false;
+    // Disallow javascript: and other non-HTTP/HTTPS protocols
+    const unsafeProtocols = ['javascript:', 'data:', 'vbscript:'];
+    if (unsafeProtocols.includes(parsed.protocol)) return false;
+    // Optionally, enforce only certain paths (e.g., starts with "/")
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+var decodedRedirect = atob(redirectUrlEncode || '');
+var redirectUrl = isSafeRedirect(decodedRedirect) ? decodedRedirect : BASE_URL + '/';
 
 // main
 const txtMinuteOut = document.querySelector('.minute-text');
