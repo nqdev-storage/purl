@@ -96,10 +96,16 @@ function renderHistoryTable(records) {
 
     const actionCell = document.createElement('td');
     const copyBtn = document.createElement('button');
-    copyBtn.className = 'btn btn-sm btn-outline-primary';
+    copyBtn.className = 'btn btn-sm btn-outline-primary me-1';
     copyBtn.textContent = 'Copy';
     copyBtn.onclick = () => copyHistoryUrl(record.shortUrl);
     actionCell.appendChild(copyBtn);
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'btn btn-sm btn-outline-danger';
+    deleteBtn.textContent = 'Xóa';
+    deleteBtn.onclick = () => deleteHistoryItem(record.id);
+    actionCell.appendChild(deleteBtn);
 
     row.appendChild(originalUrlCell);
     row.appendChild(shortUrlCell);
@@ -129,6 +135,78 @@ function copyHistoryUrl(url) {
     });
   } else {
     fallbackCopyToClipboard(url);
+  }
+}
+
+async function deleteHistoryItem(id) {
+  try {
+    const result = await Swal.fire({
+      title: 'Xác nhận xóa?',
+      text: 'Bạn có chắc chắn muốn xóa mục này?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Xóa',
+      cancelButtonText: 'Hủy'
+    });
+
+    if (result.isConfirmed) {
+      const db = await openDatabase();
+      const transaction = db.transaction([STORE_NAME], 'readwrite');
+      const store = transaction.objectStore(STORE_NAME);
+      store.delete(id);
+
+      transaction.oncomplete = () => {
+        db.close();
+        loadHistory();
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Đã xóa",
+          timer: 1500,
+          showConfirmButton: false
+        });
+      };
+    }
+  } catch (error) {
+    console.log("🚀 QuyNH: deleteHistoryItem -> error", error);
+  }
+}
+
+async function clearAllHistory() {
+  try {
+    const result = await Swal.fire({
+      title: 'Xác nhận xóa toàn bộ?',
+      text: 'Bạn có chắc chắn muốn xóa toàn bộ lịch sử?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Xóa tất cả',
+      cancelButtonText: 'Hủy'
+    });
+
+    if (result.isConfirmed) {
+      const db = await openDatabase();
+      const transaction = db.transaction([STORE_NAME], 'readwrite');
+      const store = transaction.objectStore(STORE_NAME);
+      store.clear();
+
+      transaction.oncomplete = () => {
+        db.close();
+        loadHistory();
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Đã xóa toàn bộ lịch sử",
+          timer: 1500,
+          showConfirmButton: false
+        });
+      };
+    }
+  } catch (error) {
+    console.log("🚀 QuyNH: clearAllHistory -> error", error);
   }
 }
 
@@ -229,6 +307,8 @@ window.onload = (event) => {
   window.convert = convert;
   window.copyURL = copyURL;
   window.copyHistoryUrl = copyHistoryUrl;
+  window.deleteHistoryItem = deleteHistoryItem;
+  window.clearAllHistory = clearAllHistory;
 
   // Load history on page load
   loadHistory();
